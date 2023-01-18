@@ -1,5 +1,7 @@
 import { ReactNode } from 'react';
 
+import Navbar from '../navbar/navbar';
+
 interface iLayoutProps {
   children: ReactNode;
 }
@@ -7,7 +9,7 @@ interface iLayoutProps {
 function Layout({ children }: iLayoutProps) {
   return (
     <>
-      // <Nav />
+      <Navbar />
       <main> {children}</main>
     </>
   );
