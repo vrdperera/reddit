@@ -1,5 +1,6 @@
 import { Flex, chakra, Box, Image } from '@chakra-ui/react';
 import tw from 'twin.macro';
+import RightContent from './rightContent/rightContent';
 import SearchInput from './searchInput';
 // import Image from 'next/image';
 
@@ -44,7 +45,8 @@ import SearchInput from './searchInput';
 function Navbar() {
   return (
     <Flex bg="white" h="44px" p="6px 20px">
-      <Flex align="center">
+      {/* Logo Icons */}
+      <Flex align="center " mr={2}>
         <Image src="/images/redditFace.svg" alt="" h="32px" w="32px" />
         <Image
           src="/images/redditText.svg"
@@ -53,7 +55,10 @@ function Navbar() {
           display={{ base: 'none', md: 'unset' }}
         />
       </Flex>
+      {/* Search Input */}
       <SearchInput />
+      {/* Right Content */}
+      <RightContent />
     </Flex>
   );
 }
