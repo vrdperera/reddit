@@ -21,7 +21,7 @@ function AuthBtns() {
         display={{ base: 'none', sm: 'unset' }}
         width={{ base: '70px', md: '110px' }}
         mr={2}
-        onClick={() => setAuthModalState({ open: true, view: 'login' })}
+        onClick={() => setAuthModalState({ open: true, view: 'signup' })}
       >
         Sign Up
       </Button>
