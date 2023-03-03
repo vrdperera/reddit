@@ -59,8 +59,8 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ toggleView }) => {
             mb={2}
             className="font-semibold text-red-500"
           >
-            Please enter the email address associated with your account. We'll
-            send you a password reset link to that email.
+            Please enter the email address associated with your account.
+            We&apos;ll send you a password reset link to that email.
           </Text>
           <form onSubmit={onSubmit} style={{ width: '100%' }}>
             <InputField
