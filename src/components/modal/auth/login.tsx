@@ -116,6 +116,25 @@ function Login() {
         Login
       </Button>
 
+      <Flex justifyContent="center" mb={2}>
+        <Text fontSize="9pt" mr={1}>
+          Forgot your password?
+        </Text>
+        <Text
+          className="cursor-pointer font-bold uppercase text-blue-500"
+          fontSize="9pt"
+          color="blue.500"
+          cursor="pointer"
+          onClick={() =>
+            setAuthModalState((prev) => ({
+              ...prev,
+              view: 'resetPassword',
+            }))
+          }
+        >
+          Reset
+        </Text>
+      </Flex>
       <Flex fontSize="9pt" justify="center" gap={2}>
         <Text className="cursor-pointer">New to Reddit?</Text>
         <Text
