@@ -1,10 +1,10 @@
 import { atom } from 'recoil';
 
-type View = 'login' | 'signup' | 'resetPassword';
+export type ModalView = 'login' | 'signup' | 'resetPassword';
 
 export interface AuthModalState {
   open: boolean;
-  view: View;
+  view: ModalView;
 }
 
 const defaultAuthModalState: AuthModalState = {
