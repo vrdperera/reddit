@@ -2,8 +2,9 @@ import { authModalState, AuthModalState } from '@/atoms/authModalAtom';
 import { Button, Flex, Input, Text } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
+import InputField from './inputField';
 
-interface UseStateProps {
+interface ILoginFromValues {
   email: string;
   password: string;
 }
@@ -11,7 +12,7 @@ interface UseStateProps {
 function Login() {
   const setAuthModalState = useSetRecoilState<AuthModalState>(authModalState);
 
-  const [loginFrom, setLoginFrom] = useState<UseStateProps>({
+  const [loginFromValues, setLoginFromValues] = useState<ILoginFromValues>({
     email: '',
     password: '',
   });
@@ -24,7 +25,7 @@ function Login() {
   const handleChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = target;
 
-    setLoginFrom((prev) => ({
+    setLoginFromValues((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -32,13 +33,21 @@ function Login() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Input
+      {/* email */}
+      <InputField
+        name="email"
+        placeholder="email"
+        type="email"
+        onChange={handleChange}
+        value={loginFromValues.email}
+      />
+      {/* <Input
         required
         name="email"
         placeholder="email"
         type="email"
         onChange={handleChange}
-        value={loginFrom.email}
+        value={loginFromValues.email}
         fontSize="10pt"
         _placeholder={{ color: 'gray.500' }}
         _hover={{
@@ -52,15 +61,25 @@ function Login() {
           border: '1px solid',
         }}
         bg="gray.50"
+      /> */}
+
+      {/* password */}
+      <InputField
+        name="password"
+        placeholder="password"
+        type="password"
+        onChange={handleChange}
+        value={loginFromValues.password}
+        mt={2}
       />
-      <Input
+      {/* <Input
         required
         name="password"
         placeholder="password"
         type="password"
         mt={2}
         onChange={handleChange}
-        value={loginFrom.password}
+        value={loginFromValues.password}
         fontSize="10pt"
         _placeholder={{ color: 'gray.500' }}
         _hover={{
@@ -74,7 +93,7 @@ function Login() {
           border: '1px solid',
         }}
         bg="gray.50"
-      />
+      /> */}
       <Button w="100%" mt={4} mb={2} h="36px" type="submit">
         Login
       </Button>
