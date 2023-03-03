@@ -6,12 +6,23 @@ interface IInputFieldProps {
   placeholder: string;
   type: string;
   mt?: number;
+  mb?: number;
+  bg?: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   value: string;
 }
 
 function InputField(props: IInputFieldProps) {
-  const { name, placeholder, type, mt = 0, onChange, value } = props;
+  const {
+    name,
+    placeholder,
+    type,
+    mt = 0,
+    mb = 0,
+    onChange,
+    value,
+    bg = '',
+  } = props;
 
   return (
     <Input
@@ -20,6 +31,7 @@ function InputField(props: IInputFieldProps) {
       placeholder={placeholder}
       type={type}
       mt={mt}
+      mb={mb}
       onChange={onChange}
       value={value}
       fontSize="10pt"
@@ -30,6 +42,7 @@ function InputField(props: IInputFieldProps) {
         border: '1px solid ',
       }}
       _focus={{
+        bg: { bg },
         outline: 'none',
         borderColor: 'blue.500',
         border: '1px solid',
