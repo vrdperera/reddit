@@ -8,7 +8,12 @@ function ErrorMessage({ error }: IErrorMessageProps) {
   if (!error) return null;
 
   return (
-    <Text textAlign="center" fontSize="10pt" color="red" mt={4}>
+    <Text
+      textAlign="center"
+      fontSize="10pt"
+      mt={4}
+      className="font-semibold text-red-500"
+    >
       {error}
     </Text>
   );
