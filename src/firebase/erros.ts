@@ -1,4 +1,7 @@
 const FIREBASE_ERRORS = {
+  'Firebase: Error': 'An unknown error occurred.',
+  'Firebase: Error EMAIL_NOT_FOUND':
+    'There is no user record corresponding to this identifier. The user may have been deleted.',
   'Firebase: Error (auth/app-deleted).':
     'The Firebase app has been deleted. Re-create the Firebase app.',
   'Firebase: Error (auth/app-not-authorized).':
