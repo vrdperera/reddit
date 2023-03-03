@@ -1,11 +1,12 @@
 import { SearchIcon } from '@chakra-ui/icons';
 import { Flex, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
+import { User } from 'firebase/auth';
 
-interface IsearcInputProps {
-  user: string;
+interface IRightContentProps {
+  user: User | null | undefined;
 }
 
-function SearchInput({ user }: IsearcInputProps) {
+function SearchInput({ user }: IRightContentProps) {
   return (
     <Flex flexGrow={1} align="center" mr={2}>
       <InputGroup>
