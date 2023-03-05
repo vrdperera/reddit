@@ -20,6 +20,7 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { BsFillPersonFill, BsFillEyeFill } from 'react-icons/bs';
 import { HiLockClosed } from 'react-icons/hi';
+import CharCountInput from './charCountInput';
 import CommunityTypeCheckbox from './CommunityTypeCheckbox';
 
 interface ICreateCommunityModalProps {
@@ -68,6 +69,11 @@ function CreateCommunityModal({
             <Divider />
             <ModalCloseButton />
             <ModalBody display="flex" flexDirection="column" padding="10px 0px">
+              {/* <CharCountInput
+                label="Name"
+                value={name}
+                onChange={handleChange}
+              /> */}
               <Text fontWeight={600} fontSize={15}>
                 Name
               </Text>
