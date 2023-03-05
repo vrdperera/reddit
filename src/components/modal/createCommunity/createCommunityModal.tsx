@@ -20,6 +20,7 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { BsFillPersonFill, BsFillEyeFill } from 'react-icons/bs';
 import { HiLockClosed } from 'react-icons/hi';
+import CommunityTypeCheckbox from './CommunityTypeCheckbox';
 
 interface ICreateCommunityModalProps {
   isOpen: boolean;
@@ -106,56 +107,32 @@ function CreateCommunityModal({
                   Community Type
                 </Text>
                 <Stack spacing={2} pt={1}>
-                  <Checkbox
-                    colorScheme="blue"
+                  <CommunityTypeCheckbox
                     name="public"
                     isChecked={communityType === 'public'}
-                    onChange={onCommunityTypeChange}
-                  >
-                    <Flex alignItems="center">
-                      <Icon as={BsFillPersonFill} mr={2} color="gray.500" />
-                      <Text fontSize="10pt" mr={1}>
-                        Public
-                      </Text>
-                      <Text fontSize="8pt" color="gray.500" pt={1}>
-                        Anyone can view, post, and comment to this community
-                      </Text>
-                    </Flex>
-                  </Checkbox>
-                  <Checkbox
-                    colorScheme="blue"
+                    onCommunityTypeChange={onCommunityTypeChange}
+                    icon={BsFillPersonFill}
+                    title="public"
+                    description="Anyone can view, post, and comment to this community"
+                  />
+
+                  <CommunityTypeCheckbox
                     name="restricted"
                     isChecked={communityType === 'restricted'}
-                    onChange={onCommunityTypeChange}
-                  >
-                    <Flex alignItems="center">
-                      <Icon as={BsFillEyeFill} color="gray.500" mr={2} />
-                      <Text fontSize="10pt" mr={1}>
-                        Restricted
-                      </Text>
-                      <Text fontSize="8pt" color="gray.500" pt={1}>
-                        Anyone can view this community, but only approved users
-                        can post
-                      </Text>
-                    </Flex>
-                  </Checkbox>
-                  <Checkbox
-                    colorScheme="blue"
+                    onCommunityTypeChange={onCommunityTypeChange}
+                    icon={BsFillPersonFill}
+                    title="restricted"
+                    description=" Anyone can view this community, but only approved users can post"
+                  />
+
+                  <CommunityTypeCheckbox
                     name="private"
                     isChecked={communityType === 'private'}
-                    onChange={onCommunityTypeChange}
-                  >
-                    <Flex alignItems="center">
-                      <Icon as={HiLockClosed} color="gray.500" mr={2} />
-                      <Text fontSize="10pt" mr={1}>
-                        Private
-                      </Text>
-                      <Text fontSize="8pt" color="gray.500" pt={1}>
-                        Only approved users can view and submit to this
-                        community
-                      </Text>
-                    </Flex>
-                  </Checkbox>
+                    onCommunityTypeChange={onCommunityTypeChange}
+                    icon={BsFillPersonFill}
+                    title="private"
+                    description="Only approved users can view and submit to this community"
+                  />
                 </Stack>
               </Box>
             </ModalBody>
@@ -186,3 +163,62 @@ function CreateCommunityModal({
 }
 
 export default CreateCommunityModal;
+
+{
+  /* <Checkbox
+                    colorScheme="blue"
+                    name="public"
+                    isChecked={communityType === 'public'}
+                    onChange={onCommunityTypeChange}
+                  >
+                    <Flex alignItems="center">
+                      <Icon as={BsFillPersonFill} mr={2} color="gray.500" />
+                      <Text fontSize="10pt" mr={1}>
+                        Public
+                      </Text>
+                      <Text fontSize="8pt" color="gray.500" pt={1}>
+                        Anyone can view, post, and comment to this community
+                      </Text>
+                    </Flex>
+                  </Checkbox> */
+}
+
+{
+  /* <Checkbox
+                    colorScheme="blue"
+                    name="private"
+                    isChecked={communityType === 'private'}
+                    onChange={onCommunityTypeChange}
+                  >
+                    <Flex alignItems="center">
+                      <Icon as={HiLockClosed} color="gray.500" mr={2} />
+                      <Text fontSize="10pt" mr={1}>
+                        Private
+                      </Text>
+                      <Text fontSize="8pt" color="gray.500" pt={1}>
+                        Only approved users can view and submit to this
+                        community
+                      </Text>
+                    </Flex>
+                  </Checkbox> */
+}
+
+{
+  /* <Checkbox
+                    colorScheme="blue"
+                    name="restricted"
+                    isChecked={communityType === 'restricted'}
+                    onChange={onCommunityTypeChange}
+                  >
+                    <Flex alignItems="center">
+                      <Icon as={BsFillEyeFill} color="gray.500" mr={2} />
+                      <Text fontSize="10pt" mr={1}>
+                        Restricted
+                      </Text>
+                      <Text fontSize="8pt" color="gray.500" pt={1}>
+                        Anyone can view this community, but only approved users
+                        can post
+                      </Text>
+                    </Flex>
+                  </Checkbox> */
+}
