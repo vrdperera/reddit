@@ -8,7 +8,7 @@ interface IRightContentProps {
 
 function SearchInput({ user }: IRightContentProps) {
   return (
-    <Flex flexGrow={1} align="center" mr={2}>
+    <Flex flexGrow={1} align="center" mr={2} maxWidth={user ? 'auto' : '600px'}>
       <InputGroup>
         <InputLeftElement pointerEvents="none">
           <SearchIcon color="gray.400" mb={1} />

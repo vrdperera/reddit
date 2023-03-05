@@ -57,14 +57,14 @@ function AuthModal() {
               justifyContent="center"
               w="70%"
             >
-              {modalState.view === 'login' || modalState.view === 'signup' ? (
+              {modalState.view === 'resetPassword' ? (
+                <ResetPassword />
+              ) : (
                 <>
                   <OAuthButtons />
                   <Text className="font-bold text-gray-400">OR</Text>
                   <OauthInput />
                 </>
-              ) : (
-                <ResetPassword />
               )}
             </Flex>
           </ModalBody>
