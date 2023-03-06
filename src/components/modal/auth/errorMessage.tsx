@@ -9,7 +9,7 @@ function ErrorMessage({ error }: IErrorMessageProps) {
 
   return (
     <Text
-      textAlign="center"
+      textAlign="left"
       fontSize="10pt"
       mt={4}
       className="font-semibold text-red-500"
