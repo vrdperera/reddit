@@ -1,3 +1,4 @@
+import { auth, firestore } from '@/firebase/clientApp';
 import {
   Button,
   Modal,
@@ -16,12 +17,16 @@ import {
   Icon,
   Stack,
 } from '@chakra-ui/react';
+import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { BsFillPersonFill, BsFillEyeFill } from 'react-icons/bs';
 import { HiLockClosed } from 'react-icons/hi';
 import CharCountInput from './charCountInput';
 import CommunityTypeCheckbox from './CommunityTypeCheckbox';
+
+import ErrorMessage from '../auth/errorMessage';
 
 interface ICreateCommunityModalProps {
   isOpen: boolean;
@@ -34,11 +39,18 @@ function CreateCommunityModal({
 }: ICreateCommunityModalProps) {
   const MAX_CHARS = 21;
   const [name, setName] = useState('');
+  console.log(name);
   const [charsRemaining, setCharsRemaining] = useState(MAX_CHARS);
-  const [nameError, setNameError] = useState('');
+  const [communityNameError, setCommunityNameError] = useState('');
   const [communityType, setCommunityType] = useState('public');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [user] = useAuthState(auth);
+
+  const clearFields = () => {
+    setName('');
+    setCommunityNameError('');
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > MAX_CHARS) return;
@@ -56,9 +68,58 @@ function CreateCommunityModal({
     setCommunityType(name);
   };
 
+  // contacting the firestore and create the community objects
+  const handleCreateCommunity = async () => {
+    if (communityNameError) setCommunityNameError('');
+
+    // check community name is valid and create the community
+    const nameRegex = /^\w{3,21}$/.test(name);
+    if (!nameRegex) {
+      return setCommunityNameError(
+        'Community names must be between 3–21 characters, and can only contain letters, numbers, or underscores.'
+      );
+    }
+    setLoading(true);
+    try {
+      // create the community document object on the firestore
+      // check that name is not already in the firestore that means not taken by someone else
+      // if it is not, then create a new community and return the community object on the firestore
+
+      // create a reference to the community document with the specified ID
+      const communityDocReference = doc(firestore, 'communities', name);
+      console.log(communityDocReference);
+      const documentSnap = await getDoc(communityDocReference);
+      console.log(documentSnap);
+
+      if (documentSnap.exists()) {
+        throw new Error(
+          `Sorry, r/${name} is already taken, Please try another`
+        );
+      }
+
+      await setDoc(communityDocReference, {
+        creatorID: user?.uid,
+        createdAt: serverTimestamp(),
+        numberOfMembers: 1,
+        privacyType: communityType,
+      });
+    } catch (error: any) {
+      console.log('handleCreateCommunity Error', error);
+      setCommunityNameError(error.message);
+    }
+
+    setLoading(false);
+  };
+
   return (
     <>
-      <Modal isOpen={isOpen} onClose={handleClose} size="lg">
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          handleClose(), clearFields();
+        }}
+        size="lg"
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader display="flex" flexDir="column" fontSize="10pt">
@@ -105,9 +166,9 @@ function CreateCommunityModal({
               >
                 {charsRemaining} Characters remaining
               </Text>
-              <Text fontSize="9pt" color="red" pt={1}>
-                {nameError}
-              </Text>
+
+              <ErrorMessage error={communityNameError} />
+
               <Box mt={4} mb={4}>
                 <Text fontWeight={600} fontSize={15}>
                   Community Type
@@ -156,7 +217,7 @@ function CreateCommunityModal({
             <Button
               variant="solid"
               height="30px"
-              // onClick={handleCreateCommunity}
+              onClick={handleCreateCommunity}
               isLoading={loading}
             >
               Create Community
