@@ -1,7 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-import { auth } from '@/firebase/clientApp';
+import { auth, firestore } from '@/firebase/clientApp';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 
 import { authModalState, AuthModalState } from '@/atoms/authModalAtom';
@@ -9,6 +9,8 @@ import { Button, Flex, Input, Text } from '@chakra-ui/react';
 import InputField from './inputField';
 import ErrorMessage from './errorMessage';
 import { FIREBASE_ERRORS } from '@/firebase/erros';
+import { collection, doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { User } from 'firebase/auth';
 
 interface ISignUpFromValues {
   email: string;
@@ -28,7 +30,7 @@ function SignUp() {
     useState<ISignUpFromValues>(initialSignUpFromValues);
 
   const [error, setError] = useState('');
-  const [createUserWithEmailAndPassword, user, loading, authError] =
+  const [createUserWithEmailAndPassword, userCred, loading, authError] =
     useCreateUserWithEmailAndPassword(auth);
 
   const setAuthModalState = useSetRecoilState<AuthModalState>(authModalState);
@@ -57,6 +59,23 @@ function SignUp() {
       [name]: value,
     }));
   };
+
+  //Store authenticated user data in Firestore "users" collection without cloud functions using Firebase 9 and React Firebase Hooks - Auth.
+  const createUserDocument = async (user: User) => {
+    const userOBJ = JSON.parse(JSON.stringify(user));
+    const userDocReference = doc(collection(firestore, 'users'), userOBJ.uid);
+    console.log(userDocReference);
+
+    await setDoc(userDocReference, {
+      ...userOBJ,
+    });
+  };
+
+  useEffect(() => {
+    if (userCred) {
+      createUserDocument(userCred.user);
+    }
+  }, [userCred]);
 
   return (
     <form onSubmit={handleSubmit}>
