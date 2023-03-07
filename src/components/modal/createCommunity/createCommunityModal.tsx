@@ -1,4 +1,7 @@
+import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import { auth, firestore } from '@/firebase/clientApp';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import {
   Button,
   Modal,
@@ -17,10 +20,14 @@ import {
   Icon,
   Stack,
 } from '@chakra-ui/react';
-import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
-import { useRouter } from 'next/router';
-import React, { useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import {
+  doc,
+  getDoc,
+  runTransaction,
+  serverTimestamp,
+  setDoc,
+} from 'firebase/firestore';
+
 import { BsFillPersonFill, BsFillEyeFill } from 'react-icons/bs';
 import { HiLockClosed } from 'react-icons/hi';
 import CharCountInput from './charCountInput';
@@ -70,38 +77,43 @@ function CreateCommunityModal({
 
   // contacting the firestore and create the community objects
   const handleCreateCommunity = async () => {
-    if (communityNameError) setCommunityNameError('');
-
-    // check community name is valid and create the community
-    const nameRegex = /^\w{3,21}$/.test(name);
-    if (!nameRegex) {
-      return setCommunityNameError(
-        'Community names must be between 3–21 characters, and can only contain letters, numbers, or underscores.'
-      );
-    }
-    setLoading(true);
     try {
-      // create the community document object on the firestore
-      // check that name is not already in the firestore that means not taken by someone else
-      // if it is not, then create a new community and return the community object on the firestore
+      if (communityNameError) setCommunityNameError('');
+
+      // check community name is valid and create the community
+      const nameRegex = /^\w{3,21}$/.test(name);
+      if (!nameRegex) {
+        return setCommunityNameError(
+          'Community names must be between 3–21 characters, and can only contain letters, numbers, or underscores.'
+        );
+      }
+      setLoading(true);
 
       // create a reference to the community document with the specified ID
       const communityDocReference = doc(firestore, 'communities', name);
-      console.log(communityDocReference);
-      const documentSnap = await getDoc(communityDocReference);
-      console.log(documentSnap);
 
-      if (documentSnap.exists()) {
-        throw new Error(
-          `Sorry, r/${name} is already taken, Please try another`
+      await runTransaction(firestore, async (transaction) => {
+        // check that name is not already in the firestore that means not taken by someone else
+        const documentSnapshot = await transaction.get(communityDocReference);
+        if (documentSnapshot.exists()) {
+          throw new Error(
+            `Sorry, r/${name} is already taken, Please try another`
+          );
+        }
+        // create the community document object on the firestore
+        // if it is not, then create a new community and return the community object on the firestore
+        transaction.set(communityDocReference, {
+          creatorID: user?.uid,
+          createdAt: serverTimestamp(),
+          numberOfMembers: 1,
+          privacyType: communityType,
+        });
+
+        // set subcollection on the user
+        transaction.set(
+          doc(firestore, `users/${user?.uid}/communitySnippets`, name),
+          { communityID: name, isModerator: true }
         );
-      }
-
-      await setDoc(communityDocReference, {
-        creatorID: user?.uid,
-        createdAt: serverTimestamp(),
-        numberOfMembers: 1,
-        privacyType: communityType,
       });
     } catch (error: any) {
       console.log('handleCreateCommunity Error', error);
