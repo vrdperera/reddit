@@ -5,6 +5,7 @@ import safeJsonStringify from 'safe-json-stringify';
 import { Community } from '@/atoms/communitiesAtom';
 import { firestore } from '@/firebase/clientApp';
 import CommunityNotFound from '@/components/community/communityNotFound';
+import Header from '@/components/community/header';
 
 interface ICommunityPageProps {
   communityData: Community;
@@ -14,10 +15,15 @@ function CommunityPage({ communityData }: ICommunityPageProps) {
   if (!communityData) {
     return <CommunityNotFound />;
   }
-  return <div>{communityData.id}</div>;
+  return (
+    <>
+      <Header communityData={communityData} />
+    </>
+  );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  // get community data from firestore and pass it to getCommunity  page
   try {
     const communityDocReference = doc(
       firestore,
