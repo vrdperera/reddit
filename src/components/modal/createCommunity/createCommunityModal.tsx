@@ -81,8 +81,8 @@ function CreateCommunityModal({
       if (communityNameError) setCommunityNameError('');
 
       // check community name is valid and create the community
-      const nameRegex = /^\w{3,21}$/.test(name);
-      if (!nameRegex) {
+      const validCommunityNameRegex = /^\w{3,21}$/.test(name);
+      if (!validCommunityNameRegex) {
         return setCommunityNameError(
           'Community names must be between 3–21 characters, and can only contain letters, numbers, or underscores.'
         );
