@@ -7,35 +7,32 @@ import { Button, Image } from '@chakra-ui/react';
 import { collection, doc, setDoc } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 import { useEffect } from 'react';
+import useOAuthButtonsUserDocument from './utils/useOAuthButtonsUserDocument';
 
 function OAuthButtons() {
-  const [signInWithGoogle, userCred, loading, authError] =
-    useSignInWithGoogle(auth);
+  const [signInWithGoogle, userCred, loading, authError] = useSignInWithGoogle(auth);
 
   //Store authenticated user data in Firestore "users" collection without cloud functions using Firebase 9 and React Firebase Hooks - Auth.
-  const createUserDocument = async (user: User) => {
-    const userOBJ = JSON.parse(JSON.stringify(user));
-    const userDocReference = doc(collection(firestore, 'users'), userOBJ.uid);
+  // const createUserDocument = async (user: User) => {
+  //   const userOBJ = JSON.parse(JSON.stringify(user));
+  //   const userDocReference = doc(collection(firestore, 'users'), userOBJ.uid);
 
-    await setDoc(userDocReference, {
-      ...userOBJ,
-    });
-  };
+  //   await setDoc(userDocReference, {
+  //     ...userOBJ,
+  //   });
+  // };
 
-  useEffect(() => {
-    if (userCred) {
-      createUserDocument(userCred.user);
-    }
-  }, [userCred]);
+  // useEffect(() => {
+  //   if (userCred) {
+  //     createUserDocument(userCred.user);
+  //   }
+  // }, [userCred]);
+
+  useOAuthButtonsUserDocument(userCred);
 
   return (
     <div className="mb-4 flex w-full flex-col gap-2">
-      <ErrorMessage
-        error={
-          authError?.message &&
-          FIREBASE_ERRORS[authError.message as keyof typeof FIREBASE_ERRORS]
-        }
-      />
+      <ErrorMessage error={authError?.message && FIREBASE_ERRORS[authError.message as keyof typeof FIREBASE_ERRORS]} />
       <Button
         variant="oauth"
         isLoading={loading}

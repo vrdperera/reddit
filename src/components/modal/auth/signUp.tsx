@@ -11,6 +11,7 @@ import ErrorMessage from './errorMessage';
 import { FIREBASE_ERRORS } from '@/firebase/erros';
 import { collection, doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { User } from 'firebase/auth';
+import useOAuthButtonsUserDocument from './utils/useOAuthButtonsUserDocument';
 
 interface ISignUpFromValues {
   email: string;
@@ -30,8 +31,7 @@ function SignUp() {
     useState<ISignUpFromValues>(initialSignUpFromValues);
 
   const [error, setError] = useState('');
-  const [createUserWithEmailAndPassword, userCred, loading, authError] =
-    useCreateUserWithEmailAndPassword(auth);
+  const [createUserWithEmailAndPassword, userCred, loading, authError] = useCreateUserWithEmailAndPassword(auth);
 
   const setAuthModalState = useSetRecoilState<AuthModalState>(authModalState);
 
@@ -42,9 +42,7 @@ function SignUp() {
     if (error) setError('');
     //check if password matches
     if (password !== confirmPassword) {
-      setError(
-        'Passwords do not match. Please make sure your passwords match and try again.'
-      );
+      setError('Passwords do not match. Please make sure your passwords match and try again.');
       return;
     }
 
@@ -61,32 +59,27 @@ function SignUp() {
   };
 
   //Store authenticated user data in Firestore "users" collection without cloud functions using Firebase 9 and React Firebase Hooks - Auth.
-  const createUserDocument = async (user: User) => {
-    const userOBJ = JSON.parse(JSON.stringify(user));
-    const userDocReference = doc(collection(firestore, 'users'), userOBJ.uid);
-    console.log(userDocReference);
+  // const createUserDocument = async (user: User) => {
+  //   const userOBJ = JSON.parse(JSON.stringify(user));
+  //   const userDocReference = doc(collection(firestore, 'users'), userOBJ.uid);
+  //   console.log(userDocReference);
 
-    await setDoc(userDocReference, {
-      ...userOBJ,
-    });
-  };
+  //   await setDoc(userDocReference, {
+  //     ...userOBJ,
+  //   });
+  // };
 
-  useEffect(() => {
-    if (userCred) {
-      createUserDocument(userCred.user);
-    }
-  }, [userCred]);
+  // useEffect(() => {
+  //   if (userCred) {
+  //     createUserDocument(userCred.user);
+  //   }
+  // }, [userCred]);
+  useOAuthButtonsUserDocument(userCred);
 
   return (
     <form onSubmit={handleSubmit}>
       {/* email */}
-      <InputField
-        name="email"
-        placeholder="email"
-        type="email"
-        onChange={handleChange}
-        value={email}
-      />
+      <InputField name="email" placeholder="email" type="email" onChange={handleChange} value={email} />
       {/* <Input
         required
         name="email"
@@ -174,11 +167,7 @@ function SignUp() {
       /> */}
 
       <ErrorMessage
-        error={
-          error ||
-          (authError?.message &&
-            FIREBASE_ERRORS[authError.message as keyof typeof FIREBASE_ERRORS])
-        }
+        error={error || (authError?.message && FIREBASE_ERRORS[authError.message as keyof typeof FIREBASE_ERRORS])}
       />
 
       <Button w="100%" mt={4} mb={2} h="36px" type="submit" isLoading={loading}>
