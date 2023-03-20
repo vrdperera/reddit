@@ -26,7 +26,23 @@ function useCommunityData() {
     }
   };
 
-  const joinCommunity = (communityData: Community) => {};
+  const joinCommunity = async (communityData: Community) => {
+    try {
+      const newSnippet: CommunitySnippet = { communityID: communityData.id, imageUrl: communityData.imageUrl || '' };
+      const bacth = writeBatch(firestore);
+
+      bacth.set(doc(firestore, `users/${user?.uid}/communitySnippets`, communityData.id), newSnippet);
+      bacth.update(doc(firestore, `communities`, communityData.id), { numberOfMembers: increment(1) });
+      await bacth.commit();
+
+      setCommunityStateValue((prev) => ({ ...prev, mySnippet: [...prev.mySnippet, newSnippet] }));
+    } catch (error: any) {
+      console.log('joinCommunity' + error);
+      setErr(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   const leaveCommunity = (communityId: string) => {};
 
   const onJoinOrLeaveCommunity = (communityData: Community, isJoined: boolean) => {
