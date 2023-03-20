@@ -1,15 +1,16 @@
-import { useRecoilState } from 'recoil';
-import { Community, CommunitySnippet, CommunityState, communityState } from '@/atoms/communitiesAtom';
 import { useEffect, useState } from 'react';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { Community, CommunitySnippet, CommunityState, communityState } from '@/atoms/communitiesAtom';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, firestore } from '@/firebase/clientApp';
 import { collection, getDocs, writeBatch, doc, increment } from 'firebase/firestore';
-import { async } from '@firebase/util';
+import { authModalState, AuthModalState } from '@/atoms/authModalAtom';
 
 function useCommunityData() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
   const [communityStateValue, setCommunityStateValue] = useRecoilState<CommunityState>(communityState);
+  const setAuthModalState = useSetRecoilState<AuthModalState>(authModalState);
   const [user] = useAuthState(auth);
 
   const getMySnippets = async () => {
@@ -71,6 +72,11 @@ function useCommunityData() {
   };
 
   const onJoinOrLeaveCommunity = (communityData: Community, isJoined: boolean) => {
+    if (!user) {
+      setAuthModalState({ open: true, view: 'login' });
+      return;
+    }
+
     if (isJoined) {
       leaveCommunity(communityData.id);
       return;
