@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, firestore } from '@/firebase/clientApp';
 import { collection, getDocs, writeBatch, doc, increment } from 'firebase/firestore';
+import { async } from '@firebase/util';
 
 function useCommunityData() {
   const [loading, setLoading] = useState(false);
@@ -28,11 +29,14 @@ function useCommunityData() {
 
   const joinCommunity = async (communityData: Community) => {
     try {
+      setLoading(true);
+
       const newSnippet: CommunitySnippet = { communityID: communityData.id, imageUrl: communityData.imageUrl || '' };
       const bacth = writeBatch(firestore);
 
       bacth.set(doc(firestore, `users/${user?.uid}/communitySnippets`, communityData.id), newSnippet);
       bacth.update(doc(firestore, `communities`, communityData.id), { numberOfMembers: increment(1) });
+
       await bacth.commit();
 
       setCommunityStateValue((prev) => ({ ...prev, mySnippet: [...prev.mySnippet, newSnippet] }));
@@ -43,7 +47,28 @@ function useCommunityData() {
       setLoading(false);
     }
   };
-  const leaveCommunity = (communityId: string) => {};
+  const leaveCommunity = async (communityId: string) => {
+    try {
+      setLoading(true);
+
+      const bacth = writeBatch(firestore);
+
+      bacth.delete(doc(firestore, `users/${user?.uid}/communitySnippets`, communityId));
+      bacth.update(doc(firestore, `communities`, communityId), { numberOfMembers: increment(-1) });
+
+      await bacth.commit();
+
+      setCommunityStateValue((prev) => ({
+        ...prev,
+        mySnippet: prev.mySnippet.filter((snippet) => snippet.communityID !== communityId),
+      }));
+    } catch (error: any) {
+      console.log('leaveCommunity' + error);
+      setErr(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onJoinOrLeaveCommunity = (communityData: Community, isJoined: boolean) => {
     if (isJoined) {
